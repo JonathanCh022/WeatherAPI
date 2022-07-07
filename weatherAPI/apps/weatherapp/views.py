@@ -1,13 +1,15 @@
 import requests
-from django.http import HttpResponse, JsonResponse
+import requests_cache
+from django.http import JsonResponse
 from django.views import View
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 # Create your views here.
 
-
 class WeatherView(View):
+
+    requests_cache.install_cache('weather_cache', backend='sqlite', expire_after=120)
 
     def get(self, request):
         """ pull data for the external API
@@ -24,12 +26,11 @@ class WeatherView(View):
                             params={'q': city,
                                     'appid': '1508a9a4840a5574c822d70ca2132032'})
         if resp:
-            print('You got the success!')
 
             resp_json = resp.json()
 
             """
-                the wind_info func for transform the info in human-redeable
+                the wind_info func for transform the api info in human-redeable info
             """
             if resp_json['wind']:
                 wind, angle = self.wind_info(resp_json['wind']['speed'], resp_json['wind']['deg'])
@@ -38,7 +39,7 @@ class WeatherView(View):
                 wind, angle, speed = "", "", ""
 
             """
-                using datetime libraries to transform unix time data
+                using datetime libraries to transform unix time data to datetime format
             """
             dt = datetime.fromtimestamp(resp_json['dt']).strftime("%Y-%d-%m %H:%M:%S")
             sunrise = datetime.fromtimestamp(resp_json['sys']['sunrise']).strftime(" %H:%M:%S")
@@ -81,7 +82,7 @@ class WeatherView(View):
         compass = {
             range(349, 11): 'north',
             range(11, 34): 'north-northeast',
-            range(34, 56): 'northEast',
+            range(34, 56): 'north-east',
             range(56, 79): 'east-northeast',
             range(79, 101): 'east',
             range(101, 124): 'east-southeast',

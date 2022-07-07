@@ -25,9 +25,6 @@ SECRET_KEY = 'django-insecure-y0^g3bo9*j&sd-n*hr4b1f!sn*$c6)26!6w903m3@z1w+y!k9a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -67,6 +64,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'weatherAPI.wsgi.application'
 
